@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-envelope"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">E-Arsip <br>SMK Darel Hikmah</div>
+        <div class="sidebar-brand-text mx-3">E-Arsip <br>SMPN 4 Tambang</div>
     </a>
 
     <!-- Divider -->

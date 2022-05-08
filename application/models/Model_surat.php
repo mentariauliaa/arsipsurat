@@ -58,4 +58,25 @@ class Model_surat extends CI_Model
     {
         return $this->db->delete($table, $where);
     }
+
+    public function hapususer($id_user){
+        $this->db->where('id_user',$id_user);
+        $this->db->delete('user');
+    }
+
+    public function hapusindeks($id_indeks){
+        $this->db->where('id_indeks',$id_indeks);
+        $this->db->delete('indeks');
+    }
+
+    public function hapussk($id_suratkeluar){
+        $this->db->where('id_suratkeluar',$id_suratkeluar);
+        $this->db->delete('suratkeluar');
+    }
+    
+    public function hapussm($id_suratmasuk){
+    $this->db->where('id_suratmasuk',$id_suratmasuk);
+    $this->db->delete('suratmasuk');
+    }
+
 }

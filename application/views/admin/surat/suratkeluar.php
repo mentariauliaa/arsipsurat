@@ -71,7 +71,7 @@
                                                 <td>
                                                     <a href="javascript:;" data-id-sk="<?php echo $sk->id_suratkeluar ?>" data-toggle="modal" data-target="#ubahsk" class="badge badge-primary d-block">edit</a>
                                                     <br>
-                                                    <a href="javascript:;" data-id-sk="<?php echo $sk->id_suratkeluar ?>" data-no-suratkeluar=<?php echo $sk->no_suratkeluar ?> data-toggle="modal" data-target="#hapussk" class="badge badge-danger d-block">hapus</a>
+                                                    <a href="<?= base_url(); ?>admin/hapussk/<?= $sk->id_suratkeluar;?>" data-id-sk="<?php echo $sk->id_suratkeluar ?>" class="badge badge-danger d-block" onclick="return confirm('yakin?');">hapus</a>
                                                 </td>
                                             <?php } else {
                                             } ?>

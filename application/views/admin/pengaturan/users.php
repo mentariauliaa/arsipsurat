@@ -63,7 +63,7 @@
                                                     <?php if ($u->id_user == $this->session->userdata('id_user')) { ?>
 
                                                     <?php } else { ?>
-                                                        <a href="#" data-id-user="<?= $u->id_user ?>" data-nama-lengkap="<?= $u->nama_lengkap ?>" data-toggle="modal" data-target="#hapususer" class="badge badge-danger d-block">hapus</a><br>
+                                                        <a href="<?= base_url(); ?>admin/hapus/<?= $u->id_user;?>" class="badge badge-danger d-block" onclick="return confirm('yakin?');">hapus</a><br>
                                                         <?php if ($u->level == "2") { ?>
                                                             <a href="<?= base_url('admin/ubahlevel/1/' . $u->id_user) ?>" data-level="<?= $u->level ?>" class="badge badge-info d-block">Jadikan Super Admin</a>
                                                         <?php } else { ?>

@@ -56,7 +56,7 @@
                                                     <a href="javascript:;" data-id-indeks="<?= $i->id_indeks ?>" data-toggle="modal" data-target="#ubahindeks"><span class="badge badge-primary d-block">Edit</span></a>
                                                     <br>
 
-                                                    <a href="#" data-id-indeks="<?= $i->id_indeks ?>" data-judul-indeks="<?= $i->judul_indeks ?>" data-toggle="modal" data-target="#hapusindeks"><span class="badge badge-danger d-block">Hapus</span></a><br>
+                                                    <a href="<?= base_url(); ?>admin/hapusindeks/<?= $i->id_indeks;?>" data-id-indeks="<?= $i->id_indeks ?>" data-judul-indeks="<?= $i->judul_indeks ?>" class="badge badge-danger d-block" onclick="return confirm('yakin?');">Hapus</a><br>
                                                 </td>
                                             <?php } else {
                                             } ?>

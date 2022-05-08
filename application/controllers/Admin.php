@@ -85,7 +85,6 @@ class Admin extends CI_Controller
                 'judul_suratmasuk' => $judul_suratmasuk,
                 'asal_surat' => $asal_surat,
                 'tanggal_masuk' => $tanggal_masuk,
-                'tanggal_diterima' => $tanggal_diterima,
                 'id_indeks' => $id_indeks,
                 'keterangan' => $keterangan,
                 'berkas_suratmasuk' => $berkas_suratmasuk
@@ -218,30 +217,12 @@ class Admin extends CI_Controller
 
     public function hapussm($id_suratmasuk)
     {
-        $cek_berkas = $this->model_surat->getdatawithadd('suratmasuk', 'id_suratmasuk=' . $id_suratmasuk)->row_array();
-        if (null !== $cek_berkas['berkas_suratmasuk']) {
-            $path = 'vendor/files/suratmasuk/' . $cek_berkas['berkas_suratmasuk'];
-            unlink($path);
-        }
-        $query = $this->db->query('DELETE FROM suratmasuk WHERE id_suratmasuk=' . $id_suratmasuk);
-        if ($query) {
-            $cek = $this->model_surat->getdatawithadd('suratmasuk', 'id_suratmasuk=' . $id_suratmasuk)->row_array();
-            if ($cek['berkas_suratmasuk'] != "") {
-                $path = 'vendor/files/suratmasuk/' . $cek['berkas_suratmasuk'];
-                unlink($path);
-            }
-            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+        $this->model_surat->hapussm($id_suratmasuk);
+        $this->session->set_flashdata('message','<div class="alert alert-success alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> Data dihapus!</h5>
+                <h5><i class="icon fas fa-check"></i> Surat berhasil dihapus!</h5>
                 </div>');
-            redirect('admin/suratmasuk');
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-times"></i> Gagal dihapus!</h5>
-                </div>');
-            redirect('admin/suratmasuk');
-        }
+        redirect('admin/suratmasuk');
     }
 
     public function laporan_suratmasuk()
@@ -407,6 +388,7 @@ class Admin extends CI_Controller
 
     public function tambahsk()
     {
+        $berkas_suratmasuk = uniqid() . '.' . $typenamaberkas_suratmasuk;
         $no_suratkeluar = htmlspecialchars($this->input->post('no_suratkeluar'));
         $judul_suratkeluar = htmlspecialchars($this->input->post('judul_suratkeluar'));
         $id_indeks = htmlspecialchars($this->input->post('id_indeks'));
@@ -418,8 +400,16 @@ class Admin extends CI_Controller
         $typeberkas_suratkeluar = end($exp);
         $berkas_suratkeluar = uniqid() . '.' . $typeberkas_suratkeluar;
 
-        $cek_no = $this->model_surat->getdatawithadd('suratkeluar', 'no_suratkeluar="' . $no_suratkeluar . '"')->row_array();
-        if (!$cek_no) {
+        
+        $query = $this->db->get_where('suratkeluar', ['no_suratkeluar' => $no_suratkeluar])->row_array();
+
+        if ($query) {
+            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-times"></i> Nomor surat sudah ada!</h5>
+                </div>');
+            redirect('admin/suratkeluar');
+        } elseif ($namaberkas_suratkeluar == null) {
             $array = [
                 'id_suratkeluar' => null,
                 'no_suratkeluar' => $no_suratkeluar,
@@ -430,29 +420,37 @@ class Admin extends CI_Controller
                 'keterangan' => $keterangan,
                 'berkas_suratkeluar' => $berkas_suratkeluar
             ];
-            if ($berkas_suratkeluar != null) {
-                $config['upload_path']          = 'vendor/files/suratkeluar/';
-                $config['allowed_types']        = 'jpeg|jpg|png|doc|docx|pdf';
-                $config['file_name'] = $berkas_suratkeluar;
+            $this->model_surat->adddata('suratkeluar', $array);
+            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-check"></i> Data ditambahkan!</h5>
+                </div>');
+            redirect('admin/suratkeluar');
+        } else {
+            $config['upload_path']          = 'vendor/files/suratkeluar/';
+            $config['allowed_types']        = 'jpeg|jpg|png|doc|docx|pdf';
+            $config['file_name'] = $berkas_suratkeluar;
 
-                $this->load->library('upload', $config);
-
-                if (!$this->upload->do_upload('berkas_suratkeluar')) {
-                    $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <h5><i class="icon fas fa-times"></i> ' . $this->upload->display_errors() . '!</h5>
-                        </div>');
-                    redirect('admin/suratkeluar');
-                } else {
-                    $this->upload->do_upload();
-                    $this->model_surat->adddata('suratkeluar', $array);
-                    $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <h5><i class="icon fas fa-check"></i> Data ditambahkan!</h5>
-                        </div>');
-                    redirect('admin/suratkeluar');
-                }
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload('berkas_suratkeluar')) {
+                $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h5><i class="icon fas fa-times"></i> Gagal!</h5>
+                    ' . $this->upload->display_errors() . '
+                    </div>');
+                redirect('admin/suratkeluar');
             } else {
+                $array = [
+                    'id_suratkeluar' => null,
+                    'no_suratkeluar' => $no_suratkeluar,
+                    'judul_suratkeluar' => $judul_suratkeluar,
+                    'id_indeks' => $id_indeks,
+                    'tujuan' => $tujuan,
+                    'tanggal_keluar' => $tanggal_keluar,
+                    'keterangan' => $keterangan,
+                    'berkas_suratkeluar' => $berkas_suratkeluar
+                ];
+                $this->upload->do_upload();
                 $this->model_surat->adddata('suratkeluar', $array);
                 $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -460,12 +458,6 @@ class Admin extends CI_Controller
                     </div>');
                 redirect('admin/suratkeluar');
             }
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-times"></i> Nomor surat sudah ada!</h5>
-                </div>');
-            redirect('admin/suratkeluar');
         }
     }
 
@@ -549,30 +541,12 @@ class Admin extends CI_Controller
 
     public function hapussk($id_suratkeluar)
     {
-        $cek_berkas = $this->model_surat->getdatawithadd('suratkeluar', 'id_suratkeluar=' . $id_suratkeluar)->row_array();
-        if (null !== $cek_berkas['berkas_suratkeluar']) {
-            $path = 'vendor/files/suratkeluar/' . $cek_berkas['berkas_suratkeluar'];
-            unlink($path);
-        }
-        $query = $this->db->query('DELETE FROM suratkeluar WHERE id_suratkeluar=' . $id_suratkeluar);
-        if ($query) {
-            $cek = $this->model_surat->getdatawithadd('suratkeluar', 'id_suratkeluar=' . $id_suratkeluar)->row_array();
-            if ($cek['berkas_suratkeluar'] != "") {
-                $path = 'vendor/files/suratkeluar/' . $cek['berkas_suratkeluar'];
-                unlink($path);
-            }
-            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+        $this->model_surat->hapussk($id_suratkeluar);
+        $this->session->set_flashdata('message','<div class="alert alert-success alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> Data dihapus!</h5>
+                <h5><i class="icon fas fa-check"></i> Surat berhasil dihapus!</h5>
                 </div>');
-            redirect('admin/suratkeluar');
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-times"></i> Gagal dihapus!</h5>
-                </div>');
-            redirect('admin/suratkeluar');
-        }
+        redirect('admin/suratkeluar');
     }
 
     public function laporan_suratkeluar()
@@ -712,20 +686,12 @@ class Admin extends CI_Controller
 
     public function hapusindeks($id_indeks)
     {
-        $query = $this->db->query('DELETE FROM indeks WHERE id_indeks=' . $id_indeks);
-        if ($query) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> Data dihapus!</h5>
-                </div>');
-            redirect('admin/indeks');
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-times"></i> Gagal dihapus!</h5>
-                </div>');
-            redirect('admin/indeks');
-        }
+        $this->model_surat->hapusindeks($id_indeks);
+        $this->session->set_flashdata ('message','<div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h5><i class="icon fas fa-check"></i> Indeks berhasil dihapus!</h5>
+        </div>');
+        redirect('admin/indeks');
     }
 
     public function users()
@@ -789,22 +755,14 @@ class Admin extends CI_Controller
         redirect('admin/users');
     }
 
-    public function hapususer($id_user)
+    public function hapus($id_user)
     {
-        $hapus = $this->model_surat->deletedata('user', array('id_user' => $id_user));
-        if ($hapus) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+        $this->model_surat->hapususer($id_user);
+        $this->session->set_flashdata('message','<div class="alert alert-success alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> User dihapus!</h5>
+                <h5><i class="icon fas fa-check"></i> User berhasil dihapus!</h5>
                 </div>');
-            redirect('admin/users');
-        } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-times"></i> User gagal dihapus!</h5>
-                </div>');
-            redirect('admin/users');
-        }
+        redirect('admin/users');
     }
 
     public function profil()

@@ -78,7 +78,7 @@
                                                     <br>
                                                     <a href="<?= base_url('admin/disposisi/' . $sm->id_suratmasuk) ?>"><span class="badge badge-warning d-block">diposisi</span></a>
                                                     <br>
-                                                    <a href="#" data-id-suratmasuk="<?php echo $sm->id_suratmasuk; ?>" data-no-suratmasuk="<?php echo $sm->no_suratmasuk; ?>" data-toggle="modal" data-target="#hapussm"><span class="badge badge-danger d-block">Hapus</span></a>
+                                                    <a href="<?= base_url(); ?>admin/hapussm/<?= $sm->id_suratmasuk;?>" data-id-suratmasuk="<?php echo $sm->id_suratmasuk; ?>" data-no-suratmasuk="<?php echo $sm->no_suratmasuk; ?>" class="badge badge-danger d-block" onclick="return confirm('yakin?');">Hapus</span></a>
                                                 </td>
                                             <?php } else {
                                             } ?>

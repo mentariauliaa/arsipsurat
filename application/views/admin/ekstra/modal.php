@@ -231,7 +231,7 @@
                                     $pecah = explode(',', $today);
                                     $bulan = $pecah[1];
                                     $tahun = $pecah[2]; ?>
-                                    <input type="text" name="no_suratkeluar" class="form-control" value=".../SMK-DH/H-<?php echo $bulan; ?>/<?php echo $tahun; ?>">
+                                    <input type="text" name="no_suratkeluar" class="form-control" value=".../SMPN4-TBG/H-<?php echo $bulan; ?>/<?php echo $tahun; ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Judul Surat Keluar</label>
@@ -387,7 +387,7 @@
             <div class="modal-body">Pilih tombol 'hapus' untuk menghapus indeks <span id="hps-judul-indeks"></span> ? </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
-                <a class="btn btn-danger" id="hps-id-indeks">Hapus</a>
+                <a href="#" class="btn btn-danger" id="hps-id-indeks">Hapus</a>
             </div>
         </div>
         <!-- /.modal-content -->
